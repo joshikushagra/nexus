@@ -30,7 +30,8 @@ export default function ClientsPage() {
   async function load() {
     try {
       setIsLoading(true);
-      const data = await fetchClients("dummy-token");
+      const token = localStorage.getItem("client_token") || "mock_token";
+      const data = await fetchClients(token);
       // The backend returns an object `{ data: [...] }`. Filter out to ensure we only see 'client'
       setClients((data.data || []).filter((u: any) => u.role === "client"));
       setError("");
@@ -54,7 +55,8 @@ export default function ClientsPage() {
     setFormLoading(true);
     setError("");
     try {
-      await createClient("dummy-token", { name: form.name, company: form.company, email: form.email, status: "lead", tags: [] });
+      const token = localStorage.getItem("client_token") || "mock_token";
+      await createClient(token, { name: form.name, company: form.company, email: form.email, status: "lead", tags: [] });
       setForm({ name: "", company: "", email: "" });
       setShowForm(false);
       await load();

@@ -36,7 +36,8 @@ export default function WorkPage() {
   const load = async () => {
     try {
       const { fetchWork } = await import("../../lib/api");
-      const res = await fetchWork("dummy-token");
+      const token = localStorage.getItem("client_token") || "mock_token";
+      const res = await fetchWork(token);
       setWorks(res.data || []);
     } catch (e) {
       console.error(e);
@@ -56,7 +57,8 @@ export default function WorkPage() {
     e.preventDefault();
     try {
       const { createWork } = await import("../../lib/api");
-      await createWork("dummy-token", {
+      const token = localStorage.getItem("client_token") || "mock_token";
+      await createWork(token, {
         title: form.title, 
         description: form.description,
         budget: parseInt(form.budget) || 0,

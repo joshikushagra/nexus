@@ -30,7 +30,8 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const res = await getCurrentUser("dummy-token"); // Will map to dummy logic
+      const token = localStorage.getItem("client_token") || "mock_token";
+      const res = await getCurrentUser(token); // Will map to dummy logic
       const user = res.data;
       if (user) {
         setProfile(p => ({

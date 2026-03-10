@@ -18,12 +18,41 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     
-    // Mock authentication bypass
-    setTimeout(() => {
-      localStorage.setItem("client_token", "mock_token_" + role);
+    try {
+      const token = `mock_${email}`;
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
+
+      if (!isLogin) {
+        // Sign up
+        const res = await fetch(`${API_URL}/users`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({ name, email, role, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to create account");
+      } else {
+        // Log in
+        const res = await fetch(`${API_URL}/users/me`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error("Account not found. Please sign up.");
+        // Override role if it exists in DB
+        if (data.data?.role) {
+          setRole(data.data.role);
+          localStorage.setItem("user_role", data.data.role);
+        }
+      }
+
+      localStorage.setItem("client_token", token);
       localStorage.setItem("user_role", role);
-      router.push("/home");
-    }, 800);
+      router.push("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

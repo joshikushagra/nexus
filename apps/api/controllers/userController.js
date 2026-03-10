@@ -47,3 +47,15 @@ export const getCurrentUser = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Get all users (for Admin Panel / Client Network)
+// @route   GET /api/users
+// @access  Private
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    next(error);
+  }
+};

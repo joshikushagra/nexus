@@ -33,8 +33,8 @@ export const verifyToken = async (req, res, next) => {
     const idToken = authHeader.split(" ")[1];
     
     // During local development without Firebase variables, we might bypass or mock this
-    if (process.env.NODE_ENV === "development" && process.env.BYPASS_AUTH === "true") {
-      req.user = { uid: "mock-firebase-uid" }; 
+    if (process.env.NODE_ENV === "development" && process.env.BYPASS_AUTH?.trim() === "true") {
+      req.user = { uid: idToken || "mock-firebase-uid" }; 
       return next();
     }
 
