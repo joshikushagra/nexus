@@ -67,7 +67,7 @@ export default function HomePage() {
               <span className="badge badge-brand" style={{ background: "rgba(99,102,241,0.25)", color: "#a5b4fc", border: "1px solid rgba(99,102,241,0.3)", fontSize: 11 }}>Client Portal</span>
             </div>
             <h1 style={{ fontSize: 30, fontWeight: 800, color: "white", letterSpacing: "-0.5px", marginBottom: 7 }}>
-              Welcome back, Kushagra 👋
+              Welcome back, Khadija 👋
             </h1>
             <p style={{ fontSize: 14.5, color: "rgba(255,255,255,0.5)", maxWidth: 500, lineHeight: 1.6, marginBottom: 24 }}>
               Your workspace is ready. Track project progress, manage clients, or connect with the community.
