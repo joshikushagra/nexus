@@ -43,10 +43,14 @@ export default function LoginPage() {
           setRole(data.data.role);
           localStorage.setItem("user_role", data.data.role);
         }
+        if (data.data?.name) {
+          localStorage.setItem("user_name", data.data.name);
+        }
       }
 
       localStorage.setItem("client_token", token);
       localStorage.setItem("user_role", role);
+      if (!isLogin) localStorage.setItem("user_name", name);
       router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");

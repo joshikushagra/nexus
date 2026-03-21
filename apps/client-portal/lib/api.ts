@@ -92,3 +92,36 @@ export async function createWork(token: string, payload: WorkCreatePayload) {
     body: JSON.stringify(payload),
   });
 }
+
+// Organization endpoints
+export async function fetchOrganizations() {
+  if (!API_BASE_URL) throw new Error("Missing NEXT_PUBLIC_API_BASE_URL");
+  const res = await fetch(`${API_BASE_URL}/organizations`);
+  return res.json();
+}
+
+// GitHub proxy endpoints
+export async function fetchGithubOrgRepos(orgName: string) {
+  if (!API_BASE_URL) throw new Error("Missing NEXT_PUBLIC_API_BASE_URL");
+  const res = await fetch(`${API_BASE_URL}/github/org/${orgName}/repos`);
+  return res.json();
+}
+
+export async function fetchGithubOrgMembers(orgName: string) {
+  if (!API_BASE_URL) throw new Error("Missing NEXT_PUBLIC_API_BASE_URL");
+  const res = await fetch(`${API_BASE_URL}/github/org/${orgName}/members`);
+  return res.json();
+}
+
+// Developer: update project progress
+export async function updateProjectProgress(
+  token: string,
+  projectId: string,
+  payload: { progress?: number; progressNotes?: string; githubRepoUrl?: string }
+) {
+  return request(`/projects/${projectId}/progress`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify(payload),
+  });
+}

@@ -19,11 +19,15 @@ app.use(express.json());
 import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import clientRequirementRoutes from "./routes/clientRequirementRoutes.js";
+import githubRoutes from "./routes/githubRoutes.js";
+import organizationRoutes from "./routes/organizationRoutes.js";
 
 // Mount Routers
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/client-requirements", clientRequirementRoutes);
+app.use("/api/github", githubRoutes);
+app.use("/api/organizations", organizationRoutes);
 
 // Healthcheck
 app.get("/api/health", (req, res) => {

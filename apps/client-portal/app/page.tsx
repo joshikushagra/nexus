@@ -1,189 +1,193 @@
 "use client";
 
 import Link from "next/link";
-import Navigation from "./components/Navigation";
 
-const quickLinks = [
-  { href: "/clients", icon: "👥", label: "Clients",  desc: "Manage your client directory",     color: "#6366f1" },
-  { href: "/work",    icon: "💼", label: "Work",     desc: "Browse open opportunities",         color: "#8b5cf6" },
-  { href: "/forum",   icon: "💬", label: "Forum",    desc: "Connect with the community",        color: "#14b8a6" },
-  { href: "/profile", icon: "👤", label: "Profile",  desc: "Update your account settings",     color: "#f59e0b" },
+const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || "http://localhost:3001";
+
+const kpis = [
+  { icon: "🚀", value: "120+", label: "Projects Delivered", color: "#6366f1" },
+  { icon: "💻", value: "40+",  label: "Active Developers",  color: "#8b5cf6" },
+  { icon: "🎯", value: "98%",  label: "Client Satisfaction",color: "#10b981" },
+  { icon: "💬", value: "500+", label: "Forum Discussions",  color: "#f59e0b" },
 ];
 
-const overviewStats = [
-  { value: "4",    label: "Active Projects",   icon: "🚀", color: "#6366f1" },
-  { value: "78%",  label: "Avg. Completion",   icon: "📈", color: "#10b981" },
-  { value: "$43k", label: "Total Budget",      icon: "💰", color: "#f59e0b" },
-  { value: "2",    label: "Due This Month",    icon: "📅", color: "#ec4899" },
+const features = [
+  { icon: "🔗", title: "GitHub Integration",  desc: "Real-time org repos, commits, and member sync directly from your GitHub organization." },
+  { icon: "📊", title: "Live Project Tracking", desc: "Developers update progress with notes and repo links. Clients see it instantly." },
+  { icon: "👥", title: "Role-Based Access",    desc: "Admins manage everything. Devs and clients see only what's relevant to them." },
+  { icon: "💼", title: "Work Marketplace",     desc: "Clients post requirements, developers apply — a streamlined hiring loop." },
 ];
 
-type ProjectStatus = "On Track" | "At Risk" | "Completed" | "Delayed";
-
-const MY_PROJECTS: {
-  name: string; client: string; progress: number;
-  status: ProjectStatus; dueDate: string; fill: string;
-}[] = [
-  { name: "E-commerce Platform",     client: "Acme Corp",     progress: 78,  status: "On Track",  dueDate: "Apr 15", fill: "fill-indigo"  },
-  { name: "React Native Mobile App", client: "TechStart Inc", progress: 45,  status: "At Risk",   dueDate: "Mar 28", fill: "fill-warning" },
-  { name: "Infrastructure Migration",client: "Cloud Sol.",    progress: 100, status: "Completed", dueDate: "Done",   fill: "fill-success" },
-  { name: "GTM Strategy Consulting", client: "SaaS Startup",  progress: 30,  status: "Delayed",   dueDate: "Mar 20", fill: "fill-danger"  },
-];
-
-const statusStyle: Record<ProjectStatus, string> = {
-  "On Track":  "badge-success",
-  "At Risk":   "badge-warning",
-  "Completed": "badge-brand",
-  "Delayed":   "badge-danger",
-};
-
-const ACTIVITY = [
-  { icon: "✅", text: "Infrastructure Migration marked complete", time: "2h ago" },
-  { icon: "💬", text: "New message from TechStart Inc PM",         time: "5h ago" },
-  { icon: "📎", text: "Design mockups uploaded for E-commerce",    time: "1d ago" },
-  { icon: "⚠️", text: "Milestone missed: Mobile App sprint 3",    time: "2d ago" },
-];
-
-export default function HomePage() {
+export default function LandingPage() {
   return (
-    <>
-      <Navigation />
-      <main>
-        {/* ── Hero ─────────────────────────────────────────────── */}
-        <div className="fade-in" style={{
-          background: "linear-gradient(135deg, #0b0b1a 0%, #12103a 100%)",
-          borderRadius: "var(--r-xl)",
-          padding: "44px 40px",
-          marginBottom: 24,
-          position: "relative",
-          overflow: "hidden",
-          border: "1px solid rgba(99,102,241,0.15)",
-        }}>
-          <div style={{ position: "absolute", top: "-50px", right: "-50px", width: 260, height: 260, borderRadius: "50%", background: "rgba(99,102,241,0.12)", filter: "blur(50px)", pointerEvents: "none" }} />
-          <div style={{ position: "absolute", bottom: "-30px", left: "25%", width: 180, height: 180, borderRadius: "50%", background: "rgba(139,92,246,0.08)", filter: "blur(40px)", pointerEvents: "none" }} />
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #06060f 0%, #0c0c22 50%, #0a0f1e 100%)", color: "white", fontFamily: "'Inter', system-ui, sans-serif", overflowX: "hidden" }}>
 
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-              <div style={{ width: 38, height: 38, borderRadius: 10, background: "linear-gradient(135deg, #6366f1, #4338ca)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "white" }}>NX</div>
-              <span className="badge badge-brand" style={{ background: "rgba(99,102,241,0.25)", color: "#a5b4fc", border: "1px solid rgba(99,102,241,0.3)", fontSize: 11 }}>Client Portal</span>
-            </div>
-            <h1 style={{ fontSize: 30, fontWeight: 800, color: "white", letterSpacing: "-0.5px", marginBottom: 7 }}>
-              Welcome back, Khadija 👋
-            </h1>
-            <p style={{ fontSize: 14.5, color: "rgba(255,255,255,0.5)", maxWidth: 500, lineHeight: 1.6, marginBottom: 24 }}>
-              Your workspace is ready. Track project progress, manage clients, or connect with the community.
-            </p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <Link href="/clients" className="btn btn-primary">View Clients</Link>
-              <Link href="/work" className="btn" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.12)" }}>Browse Work</Link>
-            </div>
+      {/* ── NAV ─────────────────────────────────────────────────────── */}
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, borderBottom: "1px solid rgba(99,102,241,0.12)", backdropFilter: "blur(16px)", background: "rgba(6,6,15,0.85)" }}>
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 9, background: "linear-gradient(135deg, #6366f1, #4338ca)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, color: "white" }}>NX</div>
+            <span style={{ fontWeight: 800, fontSize: 17, letterSpacing: "-0.3px" }}>Nexus</span>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <a href={`${ADMIN_URL}/login`}
+              style={{ padding: "7px 16px", borderRadius: 8, border: "1px solid rgba(99,102,241,0.35)", color: "#a5b4fc", fontSize: 13, fontWeight: 600, textDecoration: "none", transition: "all 0.2s", cursor: "pointer" }}
+              onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(99,102,241,0.12)"; }}
+              onMouseOut={(e)  => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            >
+              Admin Login
+            </a>
+            <Link href="/login"
+              style={{ padding: "7px 16px", borderRadius: 8, background: "linear-gradient(135deg, #6366f1, #4338ca)", color: "white", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+              Sign In
+            </Link>
           </div>
         </div>
+      </nav>
 
-        {/* ── Overview stats ────────────────────────────────────── */}
-        <div className="stats-grid fade-in">
-          {overviewStats.map((s) => (
-            <div key={s.label} className="stat-card">
-              <div className="stat-card-icon" style={{ background: s.color + "18", color: s.color }}>{s.icon}</div>
-              <div className="stat-card-value" style={{ color: s.color }}>{s.value}</div>
-              <div className="stat-card-label">{s.label}</div>
+      {/* ── HERO ────────────────────────────────────────────────────── */}
+      <section style={{ maxWidth: 1160, margin: "0 auto", padding: "96px 24px 80px", textAlign: "center", position: "relative" }}>
+        {/* Glow blobs */}
+        <div style={{ position: "absolute", top: 30, left: "50%", transform: "translateX(-50%)", width: 700, height: 420, background: "radial-gradient(ellipse, rgba(99,102,241,0.22) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 14px", border: "1px solid rgba(99,102,241,0.3)", borderRadius: 100, background: "rgba(99,102,241,0.1)", fontSize: 12.5, color: "#a5b4fc", fontWeight: 600, marginBottom: 28, letterSpacing: 0.4 }}>
+            ✦ The Developer & Client Command Center
+          </div>
+          <h1 style={{ fontSize: "clamp(38px, 6vw, 68px)", fontWeight: 900, lineHeight: 1.07, letterSpacing: "-2px", marginBottom: 22, background: "linear-gradient(135deg, #fff 30%, rgba(165,180,252,0.75) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            Build Together.<br />Deliver Faster.
+          </h1>
+          <p style={{ fontSize: 18, color: "rgba(255,255,255,0.5)", maxWidth: 540, margin: "0 auto 40px", lineHeight: 1.7 }}>
+            Nexus connects developers, clients, and admins on one platform — with live project tracking, GitHub integration, and a built-in work marketplace.
+          </p>
+          <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+            <Link href="/login"
+              style={{ padding: "13px 30px", borderRadius: 10, background: "linear-gradient(135deg, #6366f1, #4338ca)", color: "white", fontWeight: 700, fontSize: 15, textDecoration: "none", boxShadow: "0 0 32px rgba(99,102,241,0.45)", transition: "transform 0.15s" }}
+              onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; }}
+              onMouseOut={(e)  => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
+            >
+              Get Started — It's Free
+            </Link>
+            <a href="#about"
+              style={{ padding: "13px 30px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.14)", color: "rgba(255,255,255,0.7)", fontWeight: 600, fontSize: 15, textDecoration: "none", cursor: "pointer" }}>
+              Learn More ↓
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── KPIs ─────────────────────────────────────────────────────── */}
+      <section style={{ maxWidth: 1160, margin: "0 auto", padding: "0 24px 80px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+          {kpis.map((k) => (
+            <div key={k.label} style={{
+              background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16,
+              padding: "28px 24px", textAlign: "center", backdropFilter: "blur(8px)",
+              transition: "border-color 0.2s, transform 0.2s",
+            }}
+              onMouseOver={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = k.color + "55"; el.style.transform = "translateY(-4px)"; }}
+              onMouseOut={(e)  => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(255,255,255,0.07)"; el.style.transform = "translateY(0)"; }}
+            >
+              <div style={{ fontSize: 32, marginBottom: 12 }}>{k.icon}</div>
+              <div style={{ fontSize: 36, fontWeight: 900, color: k.color, letterSpacing: "-1px", marginBottom: 6 }}>{k.value}</div>
+              <div style={{ fontSize: 13.5, color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{k.label}</div>
             </div>
           ))}
         </div>
+      </section>
 
-        {/* ── Project Progress ──────────────────────────────────── */}
-        <div className="card fade-in">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brand-400)" strokeWidth="2">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-              </svg>
-              <div style={{ fontWeight: 700, fontSize: 15 }}>My Project Progress</div>
+      {/* ── ABOUT ────────────────────────────────────────────────────── */}
+      <section id="about" style={{ maxWidth: 1160, margin: "0 auto", padding: "60px 24px 80px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, color: "#6366f1", textTransform: "uppercase", marginBottom: 14 }}>About Nexus</div>
+            <h2 style={{ fontSize: "clamp(26px, 4vw, 40px)", fontWeight: 900, letterSpacing: "-1px", lineHeight: 1.18, marginBottom: 20 }}>
+              One platform for your entire development ecosystem
+            </h2>
+            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 15.5, lineHeight: 1.75, marginBottom: 24 }}>
+              Nexus was built to eliminate the friction between clients, developers, and management. Instead of scattered tools, emails, and spreadsheets — everything lives here.
+            </p>
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14.5, lineHeight: 1.75, marginBottom: 32 }}>
+              Developers update their progress and link their repos. Clients see delivery in real time. Admins manage users, tasks, and audits from a dedicated control panel. No more confusion about who's doing what.
+            </p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <Link href="/login" style={{ padding: "10px 22px", borderRadius: 9, background: "rgba(99,102,241,0.15)", border: "1px solid rgba(99,102,241,0.3)", color: "#a5b4fc", fontWeight: 600, fontSize: 14, textDecoration: "none" }}>
+                Developer / Client →
+              </Link>
+              <a href={`${ADMIN_URL}/login`} style={{ padding: "10px 22px", borderRadius: 9, border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)", fontWeight: 600, fontSize: 14, textDecoration: "none" }}>
+                Admin Panel →
+              </a>
             </div>
-            <Link href="/work" style={{ fontSize: 12.5, color: "var(--brand-400)", fontWeight: 600 }}>View all →</Link>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            {MY_PROJECTS.map((proj, i) => (
-              <div key={proj.name} style={{
-                padding: "14px 0",
-                borderBottom: i < MY_PROJECTS.length - 1 ? "1px solid var(--border)" : "none",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, fontSize: 13.5, marginBottom: 1 }}>{proj.name}</div>
-                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{proj.client}</div>
-                  </div>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: proj.progress === 100 ? "var(--success)" : "var(--text)", flexShrink: 0 }}>
-                    {proj.progress}%
-                  </div>
-                  <span className={`badge ${statusStyle[proj.status]}`} style={{ flexShrink: 0 }}>{proj.status}</span>
-                  <div style={{ fontSize: 12, color: "var(--text-tertiary)", flexShrink: 0, minWidth: 50, textAlign: "right" }}>
-                    {proj.dueDate}
-                  </div>
-                </div>
-                <div className="progress-bar-wrap">
-                  <div className={`progress-bar-fill ${proj.fill}`} style={{ width: `${proj.progress}%` }} />
-                </div>
+          {/* Feature tiles */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            {features.map((f) => (
+              <div key={f.title} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "20px 18px" }}>
+                <div style={{ fontSize: 24, marginBottom: 10 }}>{f.icon}</div>
+                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>{f.title}</div>
+                <div style={{ fontSize: 12.5, color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>{f.desc}</div>
               </div>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* ── Bottom two-column layout ──────────────────────────── */}
-        <div className="grid grid-2 fade-in" style={{ gap: 16 }}>
+      {/* ── DUAL LOGIN CTA ───────────────────────────────────────────── */}
+      <section style={{ maxWidth: 1160, margin: "0 auto", padding: "0 24px 100px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
 
-          {/* Quick Access */}
-          <div className="card" style={{ margin: 0 }}>
-            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Quick Access</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {quickLinks.map((item) => (
-                <Link key={item.href} href={item.href} style={{
-                  display: "flex", alignItems: "center", gap: 12, padding: "10px 12px",
-                  borderRadius: "var(--r-md)", transition: "background 0.15s",
-                  cursor: "pointer",
-                }}
-                  onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"}
-                  onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = "transparent"}
-                >
-                  <div style={{ width: 36, height: 36, borderRadius: 9, background: item.color + "18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17, flexShrink: 0 }}>
-                    {item.icon}
+          {/* User Portal Card */}
+          <div style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0.04) 100%)", border: "1px solid rgba(99,102,241,0.22)", borderRadius: 20, padding: "40px 36px", position: "relative", overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: -40, right: -40, width: 180, height: 180, borderRadius: "50%", background: "rgba(99,102,241,0.12)", filter: "blur(40px)" }} />
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 13, background: "linear-gradient(135deg, #6366f1, #4338ca)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 20 }}>👤</div>
+              <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 8, letterSpacing: "-0.5px" }}>Developer & Client</div>
+              <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.65, marginBottom: 28 }}>
+                Browse projects, post work opportunities, update your progress, manage clients, and engage with the community.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
+                {["Track project progress live", "Browse & apply for work", "Manage your client network", "Community forum access"].map(item => (
+                  <div key={item} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: "rgba(255,255,255,0.6)" }}>
+                    <span style={{ color: "#6366f1", fontWeight: 700, fontSize: 16 }}>✓</span> {item}
                   </div>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 13.5, marginBottom: 1 }}>{item.label}</div>
-                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{item.desc}</div>
-                  </div>
-                  <svg style={{ marginLeft: "auto", color: "var(--text-tertiary)", flexShrink: 0 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 18l6-6-6-6"/>
-                  </svg>
-                </Link>
-              ))}
+                ))}
+              </div>
+              <Link href="/login"
+                style={{ display: "inline-block", padding: "12px 26px", borderRadius: 10, background: "linear-gradient(135deg, #6366f1, #4338ca)", color: "white", fontWeight: 700, fontSize: 14.5, textDecoration: "none", boxShadow: "0 0 24px rgba(99,102,241,0.4)" }}>
+                Enter Portal →
+              </Link>
             </div>
           </div>
 
-          {/* Recent Activity */}
-          <div className="card" style={{ margin: 0 }}>
-            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Recent Activity</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-              {ACTIVITY.map((a, i) => (
-                <div key={i} style={{
-                  display: "flex", gap: 12, alignItems: "flex-start",
-                  padding: "11px 0",
-                  borderBottom: i < ACTIVITY.length - 1 ? "1px solid var(--border)" : "none",
-                }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, flexShrink: 0 }}>
-                    {a.icon}
+          {/* Admin Panel Card */}
+          <div style={{ background: "linear-gradient(135deg, rgba(239,68,68,0.07) 0%, rgba(239,68,68,0.02) 100%)", border: "1px solid rgba(239,68,68,0.18)", borderRadius: 20, padding: "40px 36px", position: "relative", overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: -40, right: -40, width: 180, height: 180, borderRadius: "50%", background: "rgba(239,68,68,0.08)", filter: "blur(40px)" }} />
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 13, background: "linear-gradient(135deg, #ef4444, #b91c1c)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 20 }}>🛡️</div>
+              <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 8, letterSpacing: "-0.5px" }}>Admin Panel</div>
+              <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.65, marginBottom: 28 }}>
+                Full control over users, projects, billing, and system settings. Restricted to authorized administrators only.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
+                {["Manage all users & roles", "View complete audit logs", "Create & assign projects", "GitHub org management"].map(item => (
+                  <div key={item} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: "rgba(255,255,255,0.6)" }}>
+                    <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 16 }}>✓</span> {item}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.45 }}>{a.text}</div>
-                    <div style={{ fontSize: 11.5, color: "var(--text-tertiary)", marginTop: 2 }}>{a.time}</div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <a href={`${ADMIN_URL}/login`}
+                style={{ display: "inline-block", padding: "12px 26px", borderRadius: 10, background: "linear-gradient(135deg, #ef4444, #b91c1c)", color: "white", fontWeight: 700, fontSize: 14.5, textDecoration: "none", boxShadow: "0 0 24px rgba(239,68,68,0.3)" }}>
+                Admin Login →
+              </a>
             </div>
           </div>
         </div>
+      </section>
 
-      </main>
-    </>
+      {/* ── FOOTER ──────────────────────────────────────────────────── */}
+      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "30px 24px", textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>
+        <span style={{ fontWeight: 700, color: "rgba(255,255,255,0.45)" }}>Nexus</span> — Built for teams that ship.
+      </footer>
+    </div>
   );
 }

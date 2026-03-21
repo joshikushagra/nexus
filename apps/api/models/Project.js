@@ -38,6 +38,20 @@ const projectSchema = new mongoose.Schema(
       default: "active",
       index: true,
     },
+    githubRepoUrl: {
+      type: String,
+      default: "",  // Link to a specific GitHub repo for this project
+    },
+    progress: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,   // Developer-updated completion percentage
+    },
+    progressNotes: {
+      type: String,
+      default: "",  // Developer's latest status update
+    },
   },
   {
     timestamps: true,

@@ -1,10 +1,8 @@
 import admin from "firebase-admin";
 import dotenv from "dotenv";
+import User from "../models/User.js";
 dotenv.config();
 
-// Since we cannot securely commit a service account JSON, we expect it either 
-// as an environment variable or a local file omitted from version control.
-// Example minimal init if variables are provided:
 try {
   let cert;
   if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
@@ -21,7 +19,7 @@ try {
 }
 
 /**
- * Middleware to verify Firebase Auth token and attach firebaseUID to request.
+ * Verifies the Firebase token and attaches the user's MongoDB role to req.user.
  */
 export const verifyToken = async (req, res, next) => {
   try {
@@ -31,19 +29,44 @@ export const verifyToken = async (req, res, next) => {
     }
 
     const idToken = authHeader.split(" ")[1];
-    
-    // During local development without Firebase variables, we might bypass or mock this
+
+    let firebaseUID;
+
     if (process.env.NODE_ENV === "development" && process.env.BYPASS_AUTH?.trim() === "true") {
-      req.user = { uid: idToken || "mock-firebase-uid" }; 
-      return next();
+      // In dev/bypass mode, treat the token string itself as the UID
+      firebaseUID = idToken || "mock-firebase-uid";
+      req.user = { uid: firebaseUID };
+    } else {
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      firebaseUID = decodedToken.uid;
+      req.user = decodedToken;
     }
 
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.user = decodedToken; // sets req.user.uid (which maps to our firebaseUID)
-    
+    // Attach role from MongoDB so downstream middleware can use req.user.role
+    const dbUser = await User.findOne({ firebaseUID }).select("role").lean();
+    if (dbUser) {
+      req.user.role = dbUser.role;
+    }
+
     next();
   } catch (error) {
     console.error("Auth Error:", error);
     return res.status(401).json({ success: false, message: "Invalid or expired token" });
   }
+};
+
+/**
+ * Middleware factory — restricts a route to users with specific roles.
+ * Usage: router.get('/secret', verifyToken, restrictTo('founder'), handler)
+ */
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: `Access denied. Required role: ${roles.join(" or ")}.`,
+      });
+    }
+    next();
+  };
 };

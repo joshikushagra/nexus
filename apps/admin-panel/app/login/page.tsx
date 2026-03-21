@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "../../lib/api";
+
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("admin@example.com");
@@ -16,8 +17,26 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const token = await login(email, password);
+      // Step 1: Generate mock token (replace with real Firebase auth in production)
+      const token = `mock_${email}`;
+
+      // Step 2: Verify user exists in DB AND has the 'founder' role
+      const res = await fetch(`${API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error("Account not found. Please contact your administrator.");
+      }
+
+      if (data.data?.role !== "founder") {
+        throw new Error("Access denied. This portal is for administrators only.");
+      }
+
+      // Step 3: Persist token & user name
       localStorage.setItem("admin_token", token);
+      localStorage.setItem("admin_name", data.data.name || "Admin");
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid credentials. Please try again.");
@@ -57,8 +76,8 @@ export default function LoginPage() {
       {/* Right — Form */}
       <div className="auth-right">
         <div className="auth-form-card fade-in">
-          <div className="auth-form-title">Welcome back</div>
-          <div className="auth-form-subtitle">Sign in to your admin account to continue</div>
+          <div className="auth-form-title">Admin Sign In</div>
+          <div className="auth-form-subtitle">Restricted to authorized administrators only</div>
 
           {error && (
             <div className="alert alert-error">
@@ -107,12 +126,15 @@ export default function LoginPage() {
               style={{ marginTop: "8px" }}
             >
               {loading ? <div className="spinner" /> : null}
-              {loading ? "Signing in…" : "Sign in to Admin Panel"}
+              {loading ? "Verifying…" : "Sign in to Admin Panel"}
             </button>
           </form>
 
           <p style={{ marginTop: "24px", fontSize: "13px", color: "var(--text-tertiary)", textAlign: "center" }}>
-            Protected area — authorized personnel only.
+            Not an admin?{" "}
+            <a href="http://localhost:3000" style={{ color: "var(--brand-400)", textDecoration: "none", fontWeight: 600 }}>
+              Go to User Portal →
+            </a>
           </p>
         </div>
       </div>
