@@ -3,6 +3,9 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 
+import { createServer } from "http";
+import { Server } from "socket.io";
+
 // Load env vars
 dotenv.config();
 
@@ -10,17 +13,46 @@ dotenv.config();
 connectDB();
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // Adjust for production
+    methods: ["GET", "POST"],
+  },
+});
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Load Routes (we will create these next)
+// Socket.io basic setup
+io.on("connection", (socket) => {
+  console.log("New client connected:", socket.id);
+
+  socket.on("join_room", (roomId) => {
+    socket.join(roomId);
+    console.log(`User ${socket.id} joined room ${roomId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
+// Make io accessible to routers
+app.set("io", io);
+
+// Load Routes
 import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import clientRequirementRoutes from "./routes/clientRequirementRoutes.js";
 import githubRoutes from "./routes/githubRoutes.js";
 import organizationRoutes from "./routes/organizationRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
+import applicationRoutes from "./routes/applicationRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 // Mount Routers
 app.use("/api/users", userRoutes);
@@ -28,6 +60,11 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/client-requirements", clientRequirementRoutes);
 app.use("/api/github", githubRoutes);
 app.use("/api/organizations", organizationRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/applications", applicationRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Healthcheck
 app.get("/api/health", (req, res) => {
@@ -45,6 +82,6 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });

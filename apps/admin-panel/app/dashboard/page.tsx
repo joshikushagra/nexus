@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
-import { fetchUsers, fetchProjects } from "../../lib/api";
+import { fetchUsers, fetchProjects, fetchDashboardStats } from "../../lib/api";
 
 type User = {
   _id: string;
@@ -27,55 +27,64 @@ type Project = {
 };
 
 const roleConfig: Record<string, { label: string; cls: string }> = {
-  founder:     { label: "Founder",     cls: "badge-danger" },
-  developer:   { label: "Developer",   cls: "badge-brand" },
-  client:      { label: "Client",      cls: "badge-success" },
+  founder:      { label: "Founder",      cls: "badge-danger" },
+  admin:        { label: "Admin",        cls: "badge-danger" },
+  developer:    { label: "Developer",    cls: "badge-brand" },
+  client:       { label: "Client",       cls: "badge-success" },
+  client_owner: { label: "Client Owner", cls: "badge-success" },
+  client_team:  { label: "Client Team",  cls: "badge-neutral" },
 };
 
 const avatarColors = ["avatar-purple","avatar-blue","avatar-teal","avatar-orange","avatar-pink","avatar-brand"];
-const getInitials  = (n: string) => (n ? n.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2) : "??");
+const getInitials  = (n: string) => (n ? n.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2) : "??");
 const getColor     = (n: string) => avatarColors[(n || "A").charCodeAt(0) % avatarColors.length];
 
 const statusStyleMap: Record<string, { cls: string; fill: string }> = {
-  "active":  { cls: "badge-success", fill: "fill-success" },
-  "completed": { cls: "badge-brand",   fill: "fill-indigo" },
+  "active":    { cls: "badge-brand",   fill: "fill-indigo" },
+  "completed": { cls: "badge-success", fill: "fill-success" },
+  "pending":   { cls: "badge-neutral", fill: "fill-neutral" },
 };
 
 const STAT_CARDS = [
-  { label: "Total Users",    icon: "👥", colorClass: "avatar-blue",   valueKey: "total" as const },
-  { label: "Clients",        icon: "🎯", colorClass: "avatar-teal",   valueKey: "clients" as const },
-  { label: "Developers",     icon: "💻", colorClass: "avatar-purple", valueKey: "developers" as const },
-  { label: "Founders",       icon: "🛡️", colorClass: "avatar-brand",  valueKey: "founders" as const },
+  { label: "Total Users",    icon: "👥", colorClass: "avatar-blue",   valueKey: "totalUsers" as const },
+  { label: "Active Projects", icon: "🚀", colorClass: "avatar-teal",   valueKey: "activeProjects" as const },
+  { label: "Open Tasks",     icon: "📋", colorClass: "avatar-purple", valueKey: "openTasks" as const },
+  { label: "Completed",      icon: "✅", colorClass: "avatar-brand",  valueKey: "completedTasks" as const },
 ];
 
 export default function DashboardPage() {
   const router = useRouter();
   const [users, setUsers]       = useState<User[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [liveStats, setLiveStats] = useState<any>(null);
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(true);
 
   useEffect(() => {
-    let token = localStorage.getItem("admin_token");
-    if (!token) { 
-      token = "mock_token";
-      localStorage.setItem("admin_token", token);
-    }
+    const token = localStorage.getItem("admin_token");
+    if (!token) { router.push("/login"); return; }
     
-    Promise.all([fetchUsers(token), fetchProjects(token)])
-      .then(([usersRes, projectsRes]) => {
+    const tokenStr = token as string;
+
+    Promise.all([
+      fetchUsers(tokenStr), 
+      fetchProjects(tokenStr),
+      fetchDashboardStats(tokenStr)
+    ])
+      .then(([usersRes, projectsRes, statsRes]) => {
         setUsers(usersRes.data || []);
         setProjects(projectsRes.data || []);
+        setLiveStats(statsRes.data);
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Failed to load data"))
       .finally(() => setLoading(false));
   }, []);
 
-  const stats = {
-    total:  users.length,
-    clients: users.filter((u) => u.role === "client").length,
-    developers: users.filter((u) => u.role === "developer").length,
-    founders: users.filter((u) => u.role === "founder").length,
+  const stats = liveStats || {
+    totalUsers: users.length,
+    activeProjects: projects.filter(p => p.status === 'active').length,
+    openTasks: 0,
+    completedTasks: 0
   };
 
   const active = projects.filter(p => p.status === "active").length;

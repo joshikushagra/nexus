@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Navigation from "../components/Navigation";
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -88,22 +89,37 @@ export default function DeveloperDashboard() {
     <>
       <Navigation />
       <main>
-        {/* Header */}
+        {/* ── Hero ─ GREEN accent for developer ── */}
         <div className="fade-in" style={{
-          background: "linear-gradient(135deg, #0b0b1a 0%, #0f1a2e 100%)",
+          background: "linear-gradient(135deg, #061a12 0%, #0a1f18 100%)",
           borderRadius: "var(--r-xl)", padding: "40px 40px", marginBottom: 24,
-          border: "1px solid rgba(99,102,241,0.15)", position: "relative", overflow: "hidden",
+          border: "1px solid rgba(16,185,129,0.18)", position: "relative", overflow: "hidden",
         }}>
-          <div style={{ position: "absolute", top: "-60px", right: "-60px", width: 280, height: 280, borderRadius: "50%", background: "rgba(99,102,241,0.1)", filter: "blur(60px)" }} />
+          {/* Glow blob */}
+          <div style={{ position: "absolute", top: "-60px", right: "-60px", width: 280, height: 280, borderRadius: "50%", background: "rgba(16,185,129,0.09)", filter: "blur(60px)" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-              <div style={{ width: 38, height: 38, borderRadius: 10, background: "linear-gradient(135deg, #6366f1, #4338ca)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: "white" }}>💻</div>
-              <span className="badge badge-brand" style={{ background: "rgba(99,102,241,0.2)", color: "#a5b4fc", border: "1px solid rgba(99,102,241,0.3)", fontSize: 11 }}>Developer Dashboard</span>
+              <div style={{ width: 38, height: 38, borderRadius: 10, background: "linear-gradient(135deg, #10b981, #059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: "white", boxShadow: "0 0 14px rgba(16,185,129,0.35)" }}>💻</div>
+              <span style={{ display: "inline-flex", alignItems: "center", padding: "3px 10px", borderRadius: 9999, background: "rgba(16,185,129,0.15)", color: "#6ee7b7", border: "1px solid rgba(16,185,129,0.25)", fontSize: 11, fontWeight: 700, letterSpacing: 0.3 }}>
+                Developer Workspace
+              </span>
             </div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, color: "white", marginBottom: 6, letterSpacing: "-0.5px" }}>Your Projects</h1>
-            <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, maxWidth: 480, lineHeight: 1.6 }}>
+            <h1 style={{ fontSize: 28, fontWeight: 800, color: "white", marginBottom: 6, letterSpacing: "-0.5px" }}>
+              {typeof window !== "undefined" && localStorage.getItem("user_name")
+                ? `Hey, ${localStorage.getItem("user_name")?.split(" ")[0]} 👋`
+                : "Your Projects 👋"}
+            </h1>
+            <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, maxWidth: 500, lineHeight: 1.6, marginBottom: 22 }}>
               Update progress, link GitHub repos, and post status notes for each of your assigned projects.
             </p>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <a href="/work" style={{ padding: "9px 20px", borderRadius: 9, background: "linear-gradient(135deg, #10b981, #059669)", color: "white", fontWeight: 700, fontSize: 14, textDecoration: "none", boxShadow: "0 0 20px rgba(16,185,129,0.35)", display: "inline-block" }}>
+                💼 Find Work
+              </a>
+              <a href="/forum" style={{ padding: "9px 20px", borderRadius: 9, background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.75)", fontWeight: 600, fontSize: 14, textDecoration: "none", display: "inline-block" }}>
+                💬 Community Forum
+              </a>
+            </div>
           </div>
         </div>
 
@@ -154,7 +170,7 @@ export default function DeveloperDashboard() {
                   {/* Project header */}
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: 16 }}>{proj.title}</div>
+                      <Link href={`/projects/${proj._id}`} style={{ fontWeight: 700, fontSize: 16, color: "var(--brand-400)", textDecoration: "none" }}>{proj.title}</Link>
                       <div style={{ fontSize: 12.5, color: "var(--text-secondary)", marginTop: 2 }}>{proj.projectType}</div>
                     </div>
                     <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -221,6 +237,35 @@ export default function DeveloperDashboard() {
             })}
           </div>
         )}
+
+        {/* ── Developer Quick Access ── */}
+        <div className="card fade-in">
+          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Quick Access</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 8 }}>
+            {[
+              { href: "/developer", icon: "💻", label: "My Projects",   desc: "Update your project status",  color: "#10b981" },
+              { href: "/work",      icon: "💼", label: "Find Work",     desc: "Browse open opportunities",   color: "#6366f1" },
+              { href: "/forum",     icon: "💬", label: "Forum",         desc: "Connect with the community",  color: "#14b8a6" },
+              { href: "/profile",   icon: "👤", label: "Profile",       desc: "Manage your account",         color: "#f59e0b" },
+            ].map((item) => (
+              <a key={item.href} href={item.href} style={{
+                display: "flex", alignItems: "center", gap: 12, padding: "10px 12px",
+                borderRadius: "var(--r-md)", transition: "background 0.15s", cursor: "pointer", textDecoration: "none",
+              }}
+                onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"}
+                onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = "transparent"}
+              >
+                <div style={{ width: 36, height: 36, borderRadius: 9, background: item.color + "18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17, flexShrink: 0 }}>
+                  {item.icon}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 13.5, marginBottom: 1 }}>{item.label}</div>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{item.desc}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
       </main>
     </>
   );

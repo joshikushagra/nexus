@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.route("/")
   .get(getProjects)
-  .post(verifyToken, createProject);
+  .post(verifyToken, restrictTo("founder", "client_owner", "admin"), createProject);
 
 router.route("/:id")
   .get(getProjectById);

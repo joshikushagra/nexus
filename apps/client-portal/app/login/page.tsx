@@ -51,7 +51,13 @@ export default function LoginPage() {
       localStorage.setItem("client_token", token);
       localStorage.setItem("user_role", role);
       if (!isLogin) localStorage.setItem("user_name", name);
-      router.push("/");
+      // Redirect to main app based on role (role is already updated in localStorage above)
+      const finalRole = localStorage.getItem("user_role") || role;
+      if (finalRole === "developer") {
+        router.push("/developer");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

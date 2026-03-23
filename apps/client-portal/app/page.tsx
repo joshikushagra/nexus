@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || "http://localhost:3001";
 
@@ -19,6 +21,19 @@ const features = [
 ];
 
 export default function LandingPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("client_token");
+    if (token) {
+      const userRole = localStorage.getItem("user_role");
+      if (userRole === "developer") {
+        router.replace("/developer");
+      } else {
+        router.replace("/dashboard");
+      }
+    }
+  }, [router]);
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #06060f 0%, #0c0c22 50%, #0a0f1e 100%)", color: "white", fontFamily: "'Inter', system-ui, sans-serif", overflowX: "hidden" }}>
 

@@ -63,3 +63,32 @@ export async function fetchProjects(token: string) {
     },
   });
 }
+
+export async function fetchTasks(token: string, projectId?: string) {
+  const query = projectId ? `?projectId=${projectId}` : "";
+  return request(`/tasks${query}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function updateTaskStatus(token: string, id: string, status: string) {
+  return request(`/tasks/${id}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+}
+
+export async function fetchDashboardStats(token: string) {
+  return request("/dashboard/stats", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}

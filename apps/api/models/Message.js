@@ -2,28 +2,32 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
+    chatRoomId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ChatRoom",
+      required: true,
+      index: true,
+    },
     senderUID: {
       type: String, // firebaseUID
       required: true,
       index: true,
     },
-    receiverUID: {
-      type: String, // firebaseUID
-      required: true,
-      index: true,
-    },
-    message: {
+    text: {
       type: String,
       required: true,
     },
-    timestamp: {
-      type: Date,
-      default: Date.now,
-      index: true, // Useful for querying chronological history
+    attachments: {
+      type: [String], // Array of file URLs
+      default: [],
     },
     isRead: {
       type: Boolean,
       default: false,
+    },
+    readBy: {
+      type: [String], // Array of firebaseUIDs
+      default: [],
     },
   },
   {

@@ -276,7 +276,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important;
 .field-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; letter-spacing: 0.2px; }
 .field-required { color: var(--danger); margin-left: 2px; }
 
-input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="date"],select,textarea {
+input,input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="date"],input[type="search"],input[type="url"],select,textarea {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid var(--border);

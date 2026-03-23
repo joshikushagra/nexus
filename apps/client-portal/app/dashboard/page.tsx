@@ -124,14 +124,14 @@ export default function DashboardPage() {
               Welcome back 👋
             </h1>
             <p style={{ fontSize: 14.5, color: "rgba(255,255,255,0.5)", maxWidth: 500, lineHeight: 1.6, marginBottom: 24 }}>
-              Track your projects in real time, explore the GitHub org, and manage your workspace.
+              Track your projects in real time, post new requirements, and manage your developer network.
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <Link href="/clients" className="btn btn-primary">View Clients</Link>
-              <Link href="/work" className="btn" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.12)" }}>Browse Work</Link>
+              <Link href="/work" className="btn btn-primary">📋 Post a Requirement</Link>
+              <Link href="/clients" className="btn" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,255,255,0.1)" }}>👥 View Clients</Link>
               {org && (
                 <a href={`https://github.com/${org.githubOrgName}`} target="_blank" rel="noopener noreferrer"
-                  className="btn" style={{ background: "rgba(255,255,255,0.08)", color: "white", border: "1px solid rgba(255,255,255,0.1)" }}>
+                  className="btn" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.65)", border: "1px solid rgba(255,255,255,0.08)" }}>
                   🐙 {org.name} on GitHub ↗
                 </a>
               )}
@@ -179,7 +179,7 @@ export default function DashboardPage() {
                 <div key={proj._id} style={{ padding: "14px 0", borderBottom: i < projects.length - 1 ? "1px solid var(--border)" : "none" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 600, fontSize: 13.5, marginBottom: 1 }}>{proj.title}</div>
+                      <Link href={`/projects/${proj._id}`} style={{ fontWeight: 600, fontSize: 13.5, marginBottom: 1, color: "var(--brand-400)", textDecoration: "none" }}>{proj.title}</Link>
                       <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{proj.projectType}
                         {proj.progressNotes && <> · <em>{proj.progressNotes}</em></>}
                       </div>
