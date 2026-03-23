@@ -1,10 +1,21 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import connectDB from "./config/db.js";
-
 import { createServer } from "http";
 import { Server } from "socket.io";
+import connectDB from "./config/db.js";
+
+// Import Routes
+import userRoutes from "./routes/userRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import clientRequirementRoutes from "./routes/clientRequirementRoutes.js";
+import githubRoutes from "./routes/githubRoutes.js";
+import organizationRoutes from "./routes/organizationRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
+import applicationRoutes from "./routes/applicationRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 // Load env vars
 dotenv.config();
@@ -42,18 +53,6 @@ io.on("connection", (socket) => {
 // Make io accessible to routers
 app.set("io", io);
 
-// Load Routes
-import userRoutes from "./routes/userRoutes.js";
-import projectRoutes from "./routes/projectRoutes.js";
-import clientRequirementRoutes from "./routes/clientRequirementRoutes.js";
-import githubRoutes from "./routes/githubRoutes.js";
-import organizationRoutes from "./routes/organizationRoutes.js";
-import taskRoutes from "./routes/taskRoutes.js";
-import applicationRoutes from "./routes/applicationRoutes.js";
-import chatRoutes from "./routes/chatRoutes.js";
-import notificationRoutes from "./routes/notificationRoutes.js";
-import dashboardRoutes from "./routes/dashboardRoutes.js";
-
 // Mount Routers
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
@@ -73,7 +72,7 @@ app.get("/api/health", (req, res) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("🔥 Global Error Handler:", err.stack);
   res.status(500).json({
     success: false,
     message: err.message || "Server Error",
@@ -83,5 +82,19 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 8000;
 httpServer.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+});
+
+// Handle unhandled rejections and exceptions to avoid silent crashes
+process.on("unhandledRejection", (err) => {
+  console.error("❌ Unhandled Rejection:", err.message);
+  console.error(err.stack);
+  // Optional: Graceful shutdown
+  // httpServer.close(() => process.exit(1));
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("❌ Uncaught Exception:", err.message);
+  console.error(err.stack);
+  process.exit(1);
 });
