@@ -2,6 +2,8 @@ import Project from "../models/Project.js";
 import Task from "../models/Task.js";
 import Notification from "../models/Notification.js";
 import Application from "../models/Application.js";
+import User from "../models/User.js";
+import ClientRequirement from "../models/ClientRequirement.js";
 
 /**
  * Gets dashboard insights for any role.
@@ -14,31 +16,33 @@ export const getDashboardInsights = async (req, res) => {
 
     if (role === "admin" || role === "founder") {
       // Admin Insights
-      const [totalProjects, activeProjects, totalUsers, pendingApplications] = await Promise.all([
+      const [totalProjects, activeProjects, totalUsers, openTasks, completedTasks] = await Promise.all([
         Project.countDocuments(),
         Project.countDocuments({ status: "active" }),
-        // User.countDocuments() // Need to import User
-        Promise.resolve(0), 
-        Application.countDocuments({ status: "pending" }),
+        User.countDocuments(),
+        Task.countDocuments({ status: { $ne: "completed" } }),
+        Task.countDocuments({ status: "completed" }),
       ]);
 
       insights = {
         totalProjects,
         activeProjects,
-        pendingApplications,
+        totalUsers,
+        openTasks,
+        completedTasks,
         projectHealth: await calculateProjectHealth(),
       };
     } else if (role === "client" || role === "client_owner") {
       // Client Insights
       const [myProjects, myRequirements, unreadNotifications] = await Promise.all([
         Project.find({ createdBy: uid }),
-        // ClientRequirement.find({ postedBy: uid }) // Need import
-        Promise.resolve([]),
+        ClientRequirement.find({ postedBy: uid }),
         Notification.countDocuments({ recipientUID: uid, isRead: false }),
       ]);
 
       insights = {
         projectsCount: myProjects.length,
+        requirementsCount: myRequirements.length,
         unreadNotifications,
         activeProjects: myProjects.filter(p => p.status === "active"),
       };
