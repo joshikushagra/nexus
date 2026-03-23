@@ -37,7 +37,20 @@ cd ../client-portal && npm install
 cd ../admin-panel && npm install
 ```
 
-### 3. Environment Configuration
+### 3. Setup Environment Variables
+Run the following command to create the necessary `.env` files from their templates:
+
+**Windows (PowerShell):**
+```powershell
+Copy-Item apps/api/.env.example apps/api/.env; Copy-Item apps/client-portal/.env.local.example apps/client-portal/.env.local; Copy-Item apps/admin-panel/.env.local.example apps/admin-panel/.env.local
+```
+
+**macOS / Linux (Bash):**
+```bash
+cp apps/api/.env.example apps/api/.env && cp apps/client-portal/.env.local.example apps/client-portal/.env.local && cp apps/admin-panel/.env.local.example apps/admin-panel/.env.local
+```
+
+### 4. Environment Configuration
 You must create environment files for each service.
 
 #### Backend (`apps/api/.env`)
@@ -70,7 +83,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
 NEXT_PUBLIC_FIREBASE_API_KEY=...
 ```
 
-### 4. Running the Services
+### 5. Running the Services
 Open three terminal windows and run each service:
 
 **Terminal 1: Backend**
