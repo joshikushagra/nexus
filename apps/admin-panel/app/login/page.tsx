@@ -30,7 +30,7 @@ export default function LoginPage() {
         throw new Error("Account not found. Please contact your administrator.");
       }
 
-      if (data.data?.role !== "founder") {
+      if (data.data?.role !== "founder" && data.data?.role !== "admin") {
         throw new Error("Access denied. This portal is for administrators only.");
       }
 
