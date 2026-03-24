@@ -38,16 +38,22 @@ cd ../admin-panel && npm install
 ```
 
 ### 3. Setup Environment Variables
-Run the following command to create the necessary `.env` files from their templates:
+Run the following command **from the project root directory** to create the necessary `.env` files from their templates:
 
 **Windows (PowerShell):**
 ```powershell
-Copy-Item apps/api/.env.example apps/api/.env; Copy-Item apps/client-portal/.env.local.example apps/client-portal/.env.local; Copy-Item apps/admin-panel/.env.local.example apps/admin-panel/.env.local
+# Run from the project root
+Copy-Item apps/api/.env.example apps/api/.env -Force
+Copy-Item apps/client-portal/.env.local.example apps/client-portal/.env.local -Force
+Copy-Item apps/admin-panel/.env.local.example apps/admin-panel/.env.local -Force
 ```
 
 **macOS / Linux (Bash):**
 ```bash
-cp apps/api/.env.example apps/api/.env && cp apps/client-portal/.env.local.example apps/client-portal/.env.local && cp apps/admin-panel/.env.local.example apps/admin-panel/.env.local
+# Run from the project root
+cp apps/api/.env.example apps/api/.env
+cp apps/client-portal/.env.local.example apps/client-portal/.env.local
+cp apps/admin-panel/.env.local.example apps/admin-panel/.env.local
 ```
 
 ### 4. Environment Configuration

@@ -32,7 +32,7 @@ export const verifyToken = async (req, res, next) => {
 
     let firebaseUID;
 
-    if (process.env.NODE_ENV === "development" && process.env.BYPASS_AUTH?.trim() === "true") {
+    if (["development", "test"].includes(process.env.NODE_ENV) && process.env.BYPASS_AUTH?.trim() === "true") {
       // In dev/bypass mode, treat the token string itself as the UID
       firebaseUID = idToken || "mock-firebase-uid";
       req.user = { uid: firebaseUID };

@@ -9,16 +9,14 @@ import Task from "../../models/Task.js";
 import Project from "../../models/Project.js";
 import Application from "../../models/Application.js";
 import ClientRequirement from "../../models/ClientRequirement.js";
+import User from "../../models/User.js";
 
 // Mock server for testing
 const app = express();
 app.use(express.json());
 
-// Mock auth middleware for testing
-app.use((req, res, next) => {
-  req.user = { uid: "test-uid", role: "admin" };
-  next();
-});
+// Auth is bypassed in server-level middleware by providing a Bearer token
+// and ensuring BYPASS_AUTH=true in .env / process.env
 
 app.use("/api/projects", projectRoutes);
 app.use("/api/applications", applicationRoutes);
@@ -50,8 +48,12 @@ describe("Integration: Project Creation Workflow", () => {
     });
 
     // 3. Accept the Application via API
+    // Ensure the test user exists in DB for the auth middleware to attach role
+    await User.create({ firebaseUID: "test-uid", role: "admin", email: "test@example.com", name: "Test Admin" });
+
     const res = await request(app)
       .patch(`/api/applications/${application._id}/status`)
+      .set("Authorization", "Bearer test-uid")
       .send({ status: "accepted" });
 
     expect(res.status).toBe(200);
