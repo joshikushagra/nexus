@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: nexus-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    rootDir: apps/api
+    envVars:
+      - key: MONGO_URI
+        sync: false # Set in Render Dashboard
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8000
+    healthCheckPath: /api/health
+
+  - type: web
+    name: nexus-client-portal
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    rootDir: apps/client-portal
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        fromService:
+          name: nexus-api
+          type: web
+          property: url
+      - key: NEXT_PUBLIC_FIREBASE_API_KEY
+        sync: false # Set in Render Dashboard
+
+  - type: web
+    name: nexus-admin-panel
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start -p 3001
+    rootDir: apps/admin-panel
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        fromService:
+          name: nexus-api
+          type: web
+          property: url

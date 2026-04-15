@@ -1,0 +1,20 @@
+{
+  "name": "nexus-monorepo",
+  "version": "1.0.0",
+  "description": "Nexus Collaboration Platform - Unified Management",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "setup:env": "npm run setup:env -w apps/api && npm run setup:env -w apps/client-portal && npm run setup:env -w apps/admin-panel",
+    "install:all": "npm install && npm install --prefix apps/api && npm install --prefix apps/client-portal && npm install --prefix apps/admin-panel",
+    "dev": "concurrently \"npm run dev --prefix apps/api\" \"npm run dev --prefix apps/client-portal\" \"npm run dev --prefix apps/admin-panel -- -- -p 3001\"",
+    "build:all": "npm run build --prefix apps/client-portal && npm run build --prefix apps/admin-panel",
+    "test:api": "npm test --prefix apps/api",
+    "seed": "npm run seed --prefix apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

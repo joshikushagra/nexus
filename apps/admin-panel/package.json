@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup:env": "if not exist .env.local copy .env.local.example .env.local"
   },
   "dependencies": {
     "firebase": "^12.10.0",

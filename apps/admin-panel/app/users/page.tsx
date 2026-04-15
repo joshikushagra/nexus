@@ -36,10 +36,10 @@ export default function UsersPage() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const load = async () => {
-    let token = localStorage.getItem("admin_token");
+    const token = localStorage.getItem("admin_token");
     if (!token) {
-      localStorage.setItem("admin_token", "mock_token");
-      token = "mock_token";
+      router.push("/login");
+      return;
     }
     setLoading(true);
     try {

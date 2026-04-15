@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import connectDB from "./config/db.js";
@@ -20,21 +22,52 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 // Load env vars
 dotenv.config();
 
+// Prevent BYPASS_AUTH from running in production no matter what
+if (process.env.NODE_ENV === "production" && process.env.BYPASS_AUTH === "true") {
+  console.error("❌ FATAL: BYPASS_AUTH=true is NOT allowed in production. Exiting.");
+  process.exit(1);
+}
+
 // Connect to Database
 connectDB();
+
+// Allowed origins for CORS
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+  : ["http://localhost:3000", "http://localhost:3001"];
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", // Adjust for production
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
   },
 });
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Security Headers (Helmet)
+app.use(helmet());
+
+// CORS
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS: origin '${origin}' not allowed`));
+  },
+  credentials: true,
+}));
+
+// Rate Limiting — max 100 requests per IP per 15 minutes
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Too many requests. Please try again later." },
+});
+app.use("/api", limiter);
+
+app.use(express.json({ limit: "1mb" }));
 
 // Socket.io basic setup
 io.on("connection", (socket) => {
